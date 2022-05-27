@@ -47,7 +47,6 @@ const updatePost = async(req, res, next) => {
         return;
     }
 
-
     ResponseStructure.accepted(res, 'Your post was updated!')
 }
 
