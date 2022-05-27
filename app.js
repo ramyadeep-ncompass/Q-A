@@ -1,6 +1,10 @@
 const express = require('express');
 require('dotenv').config();
 
+const { router } = require('./route/route');
+const { errorHandler } = require('./utilities/error-handler');
+const { ResponseStructure } = require('./utilities/response-structure');
+
 
 const App = express();
 
@@ -12,8 +16,9 @@ App.get('/', (req, res, next) => {
         // next(ApiError.internalError('Server is not responding'));
 })
 
-// App.use('/api', router);
+App.use('/api', router);
 
+App.use(errorHandler)
 
 const port = process.env.SERVER_PORT;
 

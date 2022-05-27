@@ -13,6 +13,17 @@ class ResponseStructure {
         }));
     }
 
+    static async contentCreated(res, message, data) {
+        res.setHeader('Content-Encoding', 'gzip');
+        res.setHeader('Content-Type', 'application/json');
+        res.status(201);
+        res.send(await compressResponse({
+            success: true,
+            message: message,
+            data: data
+        }));
+    }
+
     static async badRequestError(res, message, data) {
         res.setHeader('Content-Encoding', 'gzip');
         res.setHeader('Content-Type', 'application/json');
