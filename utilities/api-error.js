@@ -14,9 +14,6 @@ class ApiError extends Error {
     static unAuthorized(message) {
         return new ApiError(message, 401);
     }
-    static noContent(message) {
-        return new ApiError(message, 204);
-    }
 }
 
 module.exports = { ApiError };
