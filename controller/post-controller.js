@@ -37,9 +37,6 @@ const updatePost = async(req, res, next) => {
     let queryParams = [user_id, post_id];
     // console.log(queryParams);
     let dbResponse = await runQueryAsync(query, queryParams);
-    console.log({
-        executedQuery: query
-    });
     if (dbResponse.error) {
         next(ApiError.internalError(dbResponse.error));
         return;

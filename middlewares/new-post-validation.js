@@ -8,8 +8,10 @@ const validateNewPost = (req, res, next) => {
         description: Joi.string().required(),
         tags: Joi.string()
     });
-
     const status = schema.validate(req.body);
+
+    console.log(Object.keys(req.body).length);
+
     if (status.error) {
 
         let joiError = status.error.details[0].message.replace('\"', '').replace('\"', '');

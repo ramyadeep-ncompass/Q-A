@@ -13,13 +13,18 @@ const validatePostUpdateRequest = (req, res, next) => {
     const status = schema.validate(req.body);
     if (status.error) {
 
-        let joiError = status.error.details[0].message.replace('\"', '').replace('\"', '');
+        const joiError = status.error.details[0].message.replace('\"', '').replace('\"', '');
         ResponseStructure.badRequestError(res, joiError);
         return;
 
-    } else {
-        next()
     }
+
+    if (Object.keys(req.body).length < 2) {
+        ResponseStructure.badRequestError(res, 'Minimum 1 field to update is required');
+        return;
+    }
+    next()
+
 
 }
 module.exports = { validatePostUpdateRequest }
