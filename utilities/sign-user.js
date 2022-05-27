@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const signUser = (email) => {
+const signUserWithJWT = (email) => {
     return new Promise((resolve) => {
         jwt.sign({ email: email }, process.env.JWT_KEY, { expiresIn: '30m' }, (err, token) => {
             resolve(token);
@@ -12,4 +12,4 @@ const signUser = (email) => {
 
 
 
-module.exports = { signUser }
+module.exports = { signUserWithJWT }

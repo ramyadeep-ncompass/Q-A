@@ -3,7 +3,6 @@ const { login } = require('../controller/user-controller');
 const { createNewPost, updatePost, deletePost } = require('../controller/post-controller');
 const { authenticateUserToken } = require('../middlewares/authenticate-user-token');
 
-
 router.post('/login', login);
 
 router.use(authenticateUserToken);
