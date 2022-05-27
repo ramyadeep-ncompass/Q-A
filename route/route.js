@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { login } = require('../controller/user-controller');
-const { createNewPost, updatePost } = require('../controller/post-controller');
+const { createNewPost, updatePost, deletePost } = require('../controller/post-controller');
 const { authenticateUserToken } = require('../middlewares/authenticate-user-token');
 
 const { validateLogin } = require('../middlewares/login-input-validation');
@@ -15,5 +15,6 @@ router.post('/new-post', validateNewPost, createNewPost);
 
 router.patch('/update', validatePostUpdateRequest, updatePost);
 
+router.delete('/delete', deletePost);
 
 module.exports = { router };
