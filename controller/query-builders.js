@@ -25,4 +25,9 @@ const buildDeleteQueryForPost = () => {
     return query;
 }
 
-module.exports = { buildUpdateQueryForPosts, buildDeleteQueryForPost }
+const buildDeleteQueryForLogin = () => {
+    let query = "SELECT email, password FROM users WHERE email = ? ";
+    return query;
+}
+
+module.exports = { buildUpdateQueryForPosts, buildDeleteQueryForPost, buildDeleteQueryForLogin }

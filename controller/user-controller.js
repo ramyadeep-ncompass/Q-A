@@ -1,14 +1,15 @@
 const md5 = require('md5');
 
+const { buildDeleteQueryForLogin } = require('../controller/query-builders');
 const { ResponseStructure } = require('../utilities/response-structure');
 const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
-const { signUser } = require('../utilities/sign-user');
+const { signUserWithJWT } = require('../utilities/sign-user');
 
 const login = async(req, res, next) => {
 
     const user = req.body;
-    const qry = "SELECT email, password FROM users WHERE email = ? ";
+    const qry = buildDeleteQueryForLogin();
     const qryParams = [user.email, user.password];
     let dbResponse = await runQueryAsync(qry, qryParams);
 
@@ -29,7 +30,7 @@ const login = async(req, res, next) => {
     } else {
         // failed authentication
         ResponseStructure.success(res, 'Logged in successfully', {
-            token: await signUser(user.email)
+            token: await signUserWithJWT(user.email)
         })
     }
 }
