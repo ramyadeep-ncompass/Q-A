@@ -1,0 +1,25 @@
+{
+    "name": "node-usecase-q&a",
+    "version": "1.0.0",
+    "description": "A basic Question and answer web API",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js",
+        "dev": "nodemon app.js"
+    },
+    "author": "ramyadeep",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^16.0.1",
+        "express": "^4.18.1",
+        "joi": "^17.6.0",
+        "jsonwebtoken": "^8.5.1",
+        "md5": "^2.3.0",
+        "mysql2": "^2.3.3",
+        "zlib": "^1.0.5"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.16"
+    }
+}
