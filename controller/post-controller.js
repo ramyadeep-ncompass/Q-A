@@ -3,9 +3,17 @@ const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
 const { getSignedUserId } = require('../controller/get-user-id');
 const { buildUpdateQueryForPosts, buildDeleteQueryForPost } = require('./query-builders');
-
+const { newPostSchema, deletePostSchema, updatePostSchema } = require('../utilities/validation-schemas');
+const { validateUserInput } = require('../utilities/input-validator');
 
 const createNewPost = async(req, res, next) => {
+
+    let joiError = validateUserInput(newPostSchema, req.body);
+    if (joiError !== true) {
+        next(ApiError.badRequest(joiError));
+        return;
+    }
+
     const signedUserEmail = req.user.email;
     // console.log(signedUserEmail);
     const newPost = {
@@ -28,6 +36,18 @@ const createNewPost = async(req, res, next) => {
 }
 
 const updatePost = async(req, res, next) => {
+
+    const joiError = validateUserInput(updatePostSchema, req.body);
+    if (joiError !== true) {
+        next(ApiError.badRequest(joiError));
+        return;
+    }
+
+    if (Object.keys(req.body).length < 2) {
+        next(ApiError.badRequest('Minimum 1 field to update is required'));
+        return;
+    }
+
     const signedUserEmail = req.user.email;
     const post_id = req.body.post_id;
 
@@ -37,6 +57,7 @@ const updatePost = async(req, res, next) => {
     let queryParams = [user_id, post_id];
     // console.log(queryParams);
     let dbResponse = await runQueryAsync(query, queryParams);
+
     if (dbResponse.error) {
         next(ApiError.internalError(dbResponse.error));
         return;
@@ -51,6 +72,13 @@ const updatePost = async(req, res, next) => {
 }
 
 const deletePost = async(req, res, next) => {
+
+    const joiError = validateUserInput(deletePostSchema, req.body);
+    if (joiError !== true) {
+        next(ApiError.badRequest(joiError));
+        return;
+    }
+
     const signedUserEmail = req.user.email;
     const query = buildDeleteQueryForPost();
 

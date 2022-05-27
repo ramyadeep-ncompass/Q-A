@@ -3,19 +3,15 @@ const { login } = require('../controller/user-controller');
 const { createNewPost, updatePost, deletePost } = require('../controller/post-controller');
 const { authenticateUserToken } = require('../middlewares/authenticate-user-token');
 
-const { validateLogin } = require('../middlewares/login-input-validation');
-const { validateNewPostRequest } = require('../middlewares/new-post-validation');
-const { validatePostDeleteRequest } = require('../middlewares/post-delete-validation');
-const { validatePostUpdateRequest } = require('../middlewares/post-update-validation');
 
-router.post('/login', validateLogin, login);
+router.post('/login', login);
 
 router.use(authenticateUserToken);
 
-router.post('/new-post', validateNewPostRequest, createNewPost);
+router.post('/new-post', createNewPost);
 
-router.patch('/update', validatePostUpdateRequest, updatePost);
+router.patch('/update', updatePost);
 
-router.delete('/delete', validatePostDeleteRequest, deletePost);
+router.delete('/delete', deletePost);
 
 module.exports = { router };

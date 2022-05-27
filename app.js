@@ -3,7 +3,8 @@ require('dotenv').config();
 
 const { router } = require('./route/route');
 const { errorHandler } = require('./utilities/error-handler');
-const { ResponseStructure } = require('./utilities/response-structure');
+const { successResponse } = require('./utilities/response-structure');
+const { ApiError } = require('./utilities/api-error');
 
 
 const App = express();
@@ -12,8 +13,8 @@ App.use(express.json());
 App.use(express.urlencoded({ extended: true }));
 
 App.get('/', (req, res, next) => {
-    ResponseStructure.success(res, "Server is Active")
-        // next(ApiError.internalError('Server is not responding'));
+    successResponse(res, "Server is Active");
+    // next(ApiError.internalError('Server is not responding'));
 })
 
 App.use('/api', router);
