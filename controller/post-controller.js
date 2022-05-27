@@ -1,6 +1,7 @@
 const { ResponseStructure } = require('../utilities/response-structure');
 const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
+const { getSignedUserId } = require('../controller/get-user-id');
 
 const createNewPost = async(req, res, next) => {
     const signedUserEmail = req.user.email;
@@ -11,22 +12,9 @@ const createNewPost = async(req, res, next) => {
         tags: req.body.tags
     }
 
-    const getUserId = async(email) => {
-        let query = "SELECT user_id FROM users WHERE email = ?";
-        let queryParams = [email];
-        let dbResponse = await runQueryAsync(query, queryParams);
-        if (dbResponse.error) {
-            next(ApiError.internalError('Something went wrong!'));
-        } else {
-            console.log(dbResponse.result, signedUserEmail);
-        }
-        return dbResponse.result[0].user_id;
-    }
-
     let query = `INSERT INTO posts (user_id,title,description,tags) VALUES (?,?,?,?)`;
-    let userId = await getUserId(signedUserEmail);
+    let userId = await getSignedUserId(signedUserEmail);
     let queryParams = [userId, newPost.title, newPost.description, newPost.tags]
-
     let dbResponse = await runQueryAsync(query, queryParams);
 
     if (dbResponse.error) {
@@ -35,8 +23,6 @@ const createNewPost = async(req, res, next) => {
     }
 
     ResponseStructure.contentCreated(res, 'New Post Created');
-
-
 }
 
 module.exports = { createNewPost }
