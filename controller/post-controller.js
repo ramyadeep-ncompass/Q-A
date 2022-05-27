@@ -37,7 +37,9 @@ const updatePost = async(req, res, next) => {
     let queryParams = [user_id, post_id];
     // console.log(queryParams);
     let dbResponse = await runQueryAsync(query, queryParams);
-
+    console.log({
+        executedQuery: query
+    });
     if (dbResponse.error) {
         next(ApiError.internalError(dbResponse.error));
         return;
@@ -48,7 +50,8 @@ const updatePost = async(req, res, next) => {
         return;
     }
 
-    ResponseStructure.accepted(res, 'Post is updated!', { query })
+
+    ResponseStructure.accepted(res, 'Your post was updated!')
 }
 
 module.exports = { createNewPost, updatePost }
