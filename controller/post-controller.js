@@ -61,11 +61,12 @@ const deletePost = async(req, res, next) => {
     let queryParams = [post_id, user_id];
 
     let dbResponse = await runQueryAsync(query, queryParams);
-    console.log({ query, queryParams })
+
     if (dbResponse.error) {
         next(ApiError.internalError(dbResponse.error));
         return;
     }
+
     if (dbResponse.result.affectedRows === 0) {
         next(ApiError.unAuthorized('You cannot delete other\'s posts'));
         return;
