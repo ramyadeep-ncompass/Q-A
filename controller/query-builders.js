@@ -20,4 +20,9 @@ const buildUpdateQueryForPosts = (fields) => {
 
 }
 
-module.exports = { buildUpdateQueryForPosts }
+const buildDeleteQueryForPost = () => {
+    let query = "DELETE FROM posts WHERE post_id = ? AND user_id = ?";
+    return query;
+}
+
+module.exports = { buildUpdateQueryForPosts, buildDeleteQueryForPost }

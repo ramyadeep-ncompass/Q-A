@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { ResponseStructure } = require('../utilities/response-structure');
 
-const validateNewPost = (req, res, next) => {
+const validateNewPostRequest = (req, res, next) => {
 
     const schema = Joi.object({
         title: Joi.string().required(),
@@ -9,8 +9,6 @@ const validateNewPost = (req, res, next) => {
         tags: Joi.string()
     });
     const status = schema.validate(req.body);
-
-    console.log(Object.keys(req.body).length);
 
     if (status.error) {
 
@@ -23,4 +21,4 @@ const validateNewPost = (req, res, next) => {
     }
 
 }
-module.exports = { validateNewPost }
+module.exports = { validateNewPostRequest }

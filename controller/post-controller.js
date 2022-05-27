@@ -2,7 +2,7 @@ const { ResponseStructure } = require('../utilities/response-structure');
 const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
 const { getSignedUserId } = require('../controller/get-user-id');
-const { buildUpdateQueryForPosts } = require('./query-builders');
+const { buildUpdateQueryForPosts, buildDeleteQueryForPost } = require('./query-builders');
 
 
 const createNewPost = async(req, res, next) => {
@@ -50,4 +50,29 @@ const updatePost = async(req, res, next) => {
     ResponseStructure.accepted(res, 'Your post was updated!')
 }
 
-module.exports = { createNewPost, updatePost }
+const deletePost = async(req, res, next) => {
+    const signedUserEmail = req.user.email;
+    const query = buildDeleteQueryForPost();
+
+    const post_id = req.body.post_id;
+    const user_id = await getSignedUserId(signedUserEmail);
+
+    let queryParams = [post_id, user_id];
+
+    let dbResponse = await runQueryAsync(query, queryParams);
+
+    if (dbResponse.error) {
+        next(ApiError.internalError(dbResponse.error));
+        return;
+    }
+
+    if (dbResponse.result.affectedRows === 0) {
+        next(ApiError.unAuthorized('You cannot delete other\'s posts'));
+        return;
+    }
+
+    ResponseStructure.success(res, 'Post was deleted!');
+}
+
+
+module.exports = { createNewPost, updatePost, deletePost }
