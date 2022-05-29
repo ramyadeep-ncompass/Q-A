@@ -132,25 +132,21 @@ const answerPost = async(req, res, next) => {
 const getQuestions = async(req, res, next) => {
     const filters = req.query;
     let query = buildQueryForGetQuestion(filters);
-    delete filters.page;
 
+    delete filters.page;
     let queryParams = Object.keys(filters)
         .map(function(key) {
-            return filters[key];
+            return `%${filters[key]}%`;
         });;
 
     let dbResponse = await runQueryAsync(query, queryParams);
 
     if (dbResponse.error) {
-        next(ApiError.internalError(dbResponse.error));
+        next(ApiError.internalError(dbResponse.error.message));
         return;
     }
 
-    if (dbResponse.result.affectedRows === 0) {
-        next(ApiError.unAuthorized('This post does not exist'));
-        return;
-    }
-    successResponse(res, "All questions", 200, dbResponse.result);
+    successResponse(res, `${dbResponse.result.length} questions found for your search`, 200, dbResponse.result);
 }
 
 module.exports = {

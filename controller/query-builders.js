@@ -43,6 +43,7 @@ const buildQueryForAnswerPost = () => {
 }
 
 const buildQueryForGetQuestion = (filters) => {
+    const pageSize = 2;
     let pagination = '';
     let title = '';
     let tags = '';
@@ -50,28 +51,27 @@ const buildQueryForGetQuestion = (filters) => {
     let filterParams = "";
 
     if (filters.page)
-        pagination = ` LIMIT 10 OFFSET ${(filters.page - 1) * 10}`;
+        pagination = ` LIMIT ${pageSize} OFFSET ${(filters.page - 1) * pageSize}`;
 
     if (filters.title) {
         if (filterActive) {
-            title = ' AND title=?'
+            title = ' AND title LIKE ?'
         } else {
             filterActive = true;
-            title = "WHERE title=?"
+            title = "WHERE title LIKE ?"
         }
         filterParams += title
     }
     if (filters.tags)
         if (filterActive) {
-            tags = " AND tags=?"
+            tags = " AND tags LIKE ?"
         } else {
             filterActive = true;
-            tags = "WHERE tags=?"
+            tags = "WHERE tags LIKE ?"
         }
     filterParams += tags
 
-
-    let query = `SELECT post_id,title,description,tags,name AS author,created_at FROM posts LEFT JOIN users ON posts.user_id = users.user_id ${filterParams} ${pagination}`;
+    let query = `SELECT post_id,title,description,tags,name AS author,created_at FROM posts LEFT JOIN users ON posts.user_id = users.user_id ${filterParams} ORDER BY created_at ${pagination}`;
     return query;
 }
 
