@@ -1,8 +1,7 @@
 const { ResponseStructure } = require('../utilities/response-structure');
 const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
-const { getSignedUserId } = require('../controller/get-user-id');
-const { buildUpdateQueryForPosts, buildDeleteQueryForPost } = require('./query-builders');
+const { buildQueryForCreatePost, buildQueryForDeletePost, buildQueryForUpdatePosts } = require('./query-builders');
 const { newPostSchema, deletePostSchema, updatePostSchema } = require('../utilities/validation-schemas');
 const { validateUserInput } = require('../utilities/input-validator');
 
@@ -22,9 +21,8 @@ const createNewPost = async(req, res, next) => {
         tags: req.body.tags
     }
 
-    let query = `INSERT INTO posts (user_id,title,description,tags) VALUES (?,?,?,?)`;
-    let userId = await getSignedUserId(signedUserEmail);
-    let queryParams = [userId, newPost.title, newPost.description, newPost.tags]
+    let query = buildQueryForCreatePost();
+    let queryParams = [signedUserEmail, newPost.title, newPost.description, newPost.tags]
     let dbResponse = await runQueryAsync(query, queryParams);
 
     if (dbResponse.error) {
@@ -51,11 +49,9 @@ const updatePost = async(req, res, next) => {
     const signedUserEmail = req.user.email;
     const post_id = req.body.post_id;
 
-    const user_id = await getSignedUserId(signedUserEmail);
+    let query = buildQueryForUpdatePosts(req.body);
+    let queryParams = [signedUserEmail, post_id];
 
-    let query = buildUpdateQueryForPosts(req.body);
-    let queryParams = [user_id, post_id];
-    // console.log(queryParams);
     let dbResponse = await runQueryAsync(query, queryParams);
 
     if (dbResponse.error) {
@@ -80,12 +76,10 @@ const deletePost = async(req, res, next) => {
     }
 
     const signedUserEmail = req.user.email;
-    const query = buildDeleteQueryForPost();
+    const query = buildQueryForDeletePost();
 
     const post_id = req.body.post_id;
-    const user_id = await getSignedUserId(signedUserEmail);
-
-    let queryParams = [post_id, user_id];
+    let queryParams = [post_id, signedUserEmail];
 
     let dbResponse = await runQueryAsync(query, queryParams);
 

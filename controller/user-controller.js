@@ -5,7 +5,7 @@ const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
 const { validateUserInput } = require('../utilities/input-validator');
 const { userSchema } = require('../utilities/validation-schemas');
-const { signUser } = require('../utilities/sign-user');
+const { signUserWithJWT } = require('../utilities/sign-user');
 
 
 const login = async(req, res, next) => {
@@ -38,7 +38,7 @@ const login = async(req, res, next) => {
     } else {
         // failed authentication
         ResponseStructure.success(res, 'Logged in successfully', {
-            token: await signUser(user.email)
+            token: await signUserWithJWT(user.email)
         })
     }
 }
