@@ -7,6 +7,7 @@ const {
     buildQueryForUpdatePosts,
     buildQueryForAnswerPost,
     buildQueryForGetQuestion,
+    buildQueryForGetAnswers
 } = require('./query-builders');
 const {
     newPostSchema,
@@ -156,6 +157,20 @@ const getQuestions = async(req, res, next) => {
     if (dbResponse.error) {
         next(ApiError.internalError(dbResponse.error.message));
         return;
+    }
+
+    // dbResponse.result.forEach(async(question) => {
+    //     console.log(question.post_id);
+    //     let query = buildQueryForGetAnswers();
+    //     // console.log(query);
+    //     // let answers = await runQueryAsync(query, [question.post_id]);
+    //     console.log(await runQueryAsync(query, [question.post_id]));
+    // });
+    for (let question of dbResponse.result) {
+        let query = buildQueryForGetAnswers();
+        let answers = await runQueryAsync(query, [question.post_id]);
+        if (answers.result.length > 0)
+            question.answers = answers.result;
     }
 
     successResponse(res, `${dbResponse.result.length} questions found for your search`, 200, dbResponse.result);

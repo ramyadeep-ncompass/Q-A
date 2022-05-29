@@ -1,6 +1,6 @@
 const md5 = require('md5');
 
-const { buildDeleteQueryForLogin } = require('../controller/query-builders');
+const { buildQueryForLogin } = require('../controller/query-builders');
 const { ResponseStructure } = require('../utilities/response-structure');
 const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
@@ -20,7 +20,7 @@ const login = async(req, res, next) => {
     }
 
     const user = req.body;
-    const qry = buildDeleteQueryForLogin();
+    const qry = buildQueryForLogin();
     const qryParams = [user.email, user.password];
     let dbResponse = await runQueryAsync(qry, qryParams);
 

@@ -31,7 +31,7 @@ const buildQueryForDeletePost = () => {
 }
 
 
-const buildDeleteQueryForLogin = () => {
+const buildQueryForLogin = () => {
     let query = "SELECT email, password FROM users WHERE email = ? ";
     return query;
 }
@@ -75,11 +75,17 @@ const buildQueryForGetQuestion = (filters) => {
     return query;
 }
 
+const buildQueryForGetAnswers = (post_id) => {
+    let query = "SELECT ans_id,answer,name,created_at FROM answers LEFT JOIN users ON answers.user_id = users.user_id WHERE post_id = ? ORDER BY created_at";
+    return query;
+}
+
 module.exports = {
-    buildDeleteQueryForLogin,
+    buildQueryForLogin,
     buildQueryForCreatePost,
     buildQueryForDeletePost,
     buildQueryForUpdatePosts,
     buildQueryForAnswerPost,
-    buildQueryForGetQuestion
+    buildQueryForGetQuestion,
+    buildQueryForGetAnswers
 }
