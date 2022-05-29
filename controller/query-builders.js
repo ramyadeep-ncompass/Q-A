@@ -16,7 +16,7 @@ const buildQueryForUpdatePosts = (fields) => {
 
 
     for (const property in fieldsToUpdate)
-        columnsToUpdate += `${property} = '${fieldsToUpdate[property]}', `;
+        columnsToUpdate += `${property} = ?, `;
 
     columnsToUpdate += ` created_at = '${current_timestamp}' `
 

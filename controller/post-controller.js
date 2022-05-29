@@ -63,9 +63,13 @@ const updatePost = async(req, res, next) => {
 
     const signedUserEmail = req.user.email;
     const post_id = req.body.post_id;
+    delete req.body.post_id;
+    let queryParams = [signedUserEmail, post_id];
+
+    organizeQueryParams(req.body, queryParams);
 
     let query = buildQueryForUpdatePosts(req.body);
-    let queryParams = [signedUserEmail, post_id];
+
 
     let dbResponse = await runQueryAsync(query, queryParams);
 
@@ -205,4 +209,15 @@ module.exports = {
     answerPost,
     getQuestions,
     getPostDetails
+}
+
+function organizeQueryParams(params, queryParams) {
+    let stack = [];
+    Object.keys(params).map(function(key) {
+        stack.push(params[key]);
+    });
+    Object.keys(params).map(function(key) {
+        queryParams.unshift(stack.pop(params[key]));
+    });
+    delete stack;
 }

@@ -17,6 +17,7 @@ module.exports.authenticateUserToken = (req, res, next) => {
     jwt.verify(token, privateKey, (err, user) => {
         if (err) {
             next(ApiError.unAuthorized('You dont have the privilege.'));
+            return;
         }
         req.user = { email: user.email };
         next();
