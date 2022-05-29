@@ -36,4 +36,16 @@ const buildDeleteQueryForLogin = () => {
     return query;
 }
 
-module.exports = { buildDeleteQueryForLogin, buildQueryForCreatePost, buildQueryForDeletePost, buildQueryForUpdatePosts }
+const buildQueryForAnswerPost = () => {
+    let current_timestamp = format(new Date(), 'YYYY-MM-DD hh:mm:ss');
+    let query = `INSERT INTO answers (user_id,post_id,answer,created_at) VALUES ((SELECT user_id FROM users WHERE email = ?),?,?,'${current_timestamp}')`
+    return query;
+}
+
+module.exports = {
+    buildDeleteQueryForLogin,
+    buildQueryForCreatePost,
+    buildQueryForDeletePost,
+    buildQueryForUpdatePosts,
+    buildQueryForAnswerPost
+}

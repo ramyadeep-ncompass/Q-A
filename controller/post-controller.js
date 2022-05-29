@@ -1,8 +1,13 @@
-const { ResponseStructure } = require('../utilities/response-structure');
+const { ResponseStructure, successResponse } = require('../utilities/response-structure');
 const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
-const { buildQueryForCreatePost, buildQueryForDeletePost, buildQueryForUpdatePosts } = require('./query-builders');
-const { newPostSchema, deletePostSchema, updatePostSchema } = require('../utilities/validation-schemas');
+const {
+    buildQueryForCreatePost,
+    buildQueryForDeletePost,
+    buildQueryForUpdatePosts,
+    buildQueryForAnswerPost
+} = require('./query-builders');
+const { newPostSchema, deletePostSchema, updatePostSchema, answerPostSchema } = require('../utilities/validation-schemas');
 const { validateUserInput } = require('../utilities/input-validator');
 
 const createNewPost = async(req, res, next) => {
@@ -96,5 +101,36 @@ const deletePost = async(req, res, next) => {
     ResponseStructure.success(res, 'Post was deleted!');
 }
 
+const answerPost = async(req, res, next) => {
+    const joiError = validateUserInput(answerPostSchema, req.body);
+    if (joiError !== true) {
+        next(ApiError.badRequest(joiError));
+        return;
+    }
 
-module.exports = { createNewPost, updatePost, deletePost }
+    const answer = req.body;
+    const signedUserEmail = req.user.email;
+    const query = buildQueryForAnswerPost();
+    const queryParams = [signedUserEmail, answer.post_id, answer.answer]
+
+    let dbResponse = await runQueryAsync(query, queryParams);
+
+    if (dbResponse.error) {
+        next(ApiError.internalError(dbResponse.error.message));
+        return;
+    }
+
+    if (dbResponse.result.affectedRows === 0) {
+        next(ApiError.unAuthorized('This post does not exist'));
+        return;
+    }
+
+    successResponse(res, "You answer has been saved");
+}
+
+module.exports = {
+    createNewPost,
+    updatePost,
+    deletePost,
+    answerPost
+}

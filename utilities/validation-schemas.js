@@ -22,4 +22,9 @@ const deletePostSchema = Joi.object({
     post_id: Joi.number().required()
 })
 
-module.exports = { userSchema, newPostSchema, updatePostSchema, deletePostSchema }
+const answerPostSchema = Joi.object({
+    post_id: Joi.number().required(),
+    answer: Joi.string().required()
+})
+
+module.exports = { userSchema, newPostSchema, updatePostSchema, deletePostSchema, answerPostSchema }
