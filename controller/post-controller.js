@@ -6,9 +6,15 @@ const {
     buildQueryForDeletePost,
     buildQueryForUpdatePosts,
     buildQueryForAnswerPost,
-    buildQueryForGetQuestion
+    buildQueryForGetQuestion,
 } = require('./query-builders');
-const { newPostSchema, deletePostSchema, updatePostSchema, answerPostSchema } = require('../utilities/validation-schemas');
+const {
+    newPostSchema,
+    deletePostSchema,
+    updatePostSchema,
+    answerPostSchema,
+    getQuestionsSchema
+} = require('../utilities/validation-schemas');
 const { validateUserInput } = require('../utilities/input-validator');
 
 const createNewPost = async(req, res, next) => {
@@ -130,6 +136,12 @@ const answerPost = async(req, res, next) => {
 }
 
 const getQuestions = async(req, res, next) => {
+    const joiError = validateUserInput(getQuestionsSchema, req.query);
+    if (joiError !== true) {
+        next(ApiError.badRequest(joiError));
+        return;
+    }
+
     const filters = req.query;
     let query = buildQueryForGetQuestion(filters);
 
