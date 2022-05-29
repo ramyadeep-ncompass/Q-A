@@ -5,8 +5,19 @@ const { ResponseStructure } = require('../utilities/response-structure');
 const { ApiError } = require('../utilities/api-error');
 const { runQueryAsync } = require('../utilities/db');
 const { signUserWithJWT } = require('../utilities/sign-user');
+const { validateUserInput } = require('../utilities/input-validator');
+const { userSchema } = require('../utilities/validation-schemas');
+
+
+
 
 const login = async(req, res, next) => {
+
+    const joiError = validateUserInput(userSchema, req.body);
+    if (joiError !== true) {
+        next(ApiError.badRequest(joiError));
+        return;
+    }
 
     const user = req.body;
     const qry = buildDeleteQueryForLogin();

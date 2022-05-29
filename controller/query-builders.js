@@ -1,6 +1,11 @@
 const { format } = require('fecha');
 
-const buildUpdateQueryForPosts = (fields) => {
+const buildQueryForCreatePost = () => {
+    const query = `INSERT INTO posts (user_id,title,description,tags) VALUES ((SELECT user_id FROM users WHERE email = ?),?,?,?)`;
+    return query;
+}
+
+const buildQueryForUpdatePosts = (fields) => {
     let query = 'UPDATE posts SET '
     let fieldsToUpdate = fields;
 
@@ -15,19 +20,20 @@ const buildUpdateQueryForPosts = (fields) => {
 
     columnsToUpdate += ` created_at = '${current_timestamp}' `
 
-    query += columnsToUpdate + 'WHERE user_id = ? AND post_id = ?';
+    query += columnsToUpdate + 'WHERE user_id = (SELECT user_id FROM users WHERE email = ?) AND post_id = ?';
     return query;
 
 }
 
-const buildDeleteQueryForPost = () => {
-    let query = "DELETE FROM posts WHERE post_id = ? AND user_id = ?";
+const buildQueryForDeletePost = () => {
+    let query = "DELETE FROM posts WHERE post_id = ? AND user_id = (SELECT user_id FROM users WHERE email = ?)";
     return query;
 }
+
 
 const buildDeleteQueryForLogin = () => {
     let query = "SELECT email, password FROM users WHERE email = ? ";
     return query;
 }
 
-module.exports = { buildUpdateQueryForPosts, buildDeleteQueryForPost, buildDeleteQueryForLogin }
+module.exports = { buildDeleteQueryForLogin, buildQueryForCreatePost, buildQueryForDeletePost, buildQueryForUpdatePosts }

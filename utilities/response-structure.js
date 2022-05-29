@@ -48,4 +48,27 @@ class ResponseStructure {
 
 }
 
-module.exports = { ResponseStructure }
+async function successResponse(res, message, statusCode, data, ) {
+    res.setHeader('Content-Encoding', 'gzip');
+    res.setHeader('Content-Type', 'application/json');
+    res.status(statusCode ? statusCode : 200);
+    res.send(await compressResponse({
+        success: true,
+        message,
+        data
+    }));
+}
+
+async function errorResponse(res, message, statusCode, data) {
+    res.setHeader('Content-Encoding', 'gzip');
+    res.setHeader('Content-Type', 'application/json');
+    res.status(statusCode ? statusCode : 500);
+    res.send(await compressResponse({
+        success: false,
+        message,
+        data
+    }));
+}
+
+
+module.exports = { ResponseStructure, successResponse, errorResponse }
