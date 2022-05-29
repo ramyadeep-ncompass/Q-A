@@ -71,7 +71,7 @@ const buildQueryForGetQuestion = (filters) => {
         }
     filterParams += tags
 
-    let query = `SELECT post_id,title,description,tags,name AS author,created_at FROM posts LEFT JOIN users ON posts.user_id = users.user_id ${filterParams} ORDER BY created_at ${pagination}`;
+    let query = `SELECT post_id,title,description,tags,name AS author,created_at FROM posts LEFT JOIN users ON posts.user_id = users.user_id ${filterParams} ORDER BY created_at DESC ${pagination}`;
     return query;
 }
 
@@ -79,7 +79,7 @@ const buildQueryForGetAnswers = (fields) => {
     let selectedFields = "ans_id,answer,name,created_at";
     if (fields)
         selectedFields = fields.split(',').join(',');
-    let query = `SELECT ${selectedFields} FROM answers LEFT JOIN users ON answers.user_id = users.user_id WHERE post_id = ? ORDER BY created_at`;
+    let query = `SELECT ${selectedFields} FROM answers LEFT JOIN users ON answers.user_id = users.user_id WHERE post_id = ? ORDER BY created_at DESC`;
     return query;
 }
 
