@@ -5,13 +5,17 @@ const {
     updatePost,
     deletePost,
     answerPost,
-    getQuestions
+    getQuestions,
+    getPostDetails
 } = require('../controller/post-controller');
+
 const { authenticateUserToken } = require('../middlewares/authenticate-user-token');
 
 router.post('/login', login);
 
 router.get('/questions', getQuestions);
+
+router.get('/post-details', getPostDetails);
 
 router.use(authenticateUserToken);
 

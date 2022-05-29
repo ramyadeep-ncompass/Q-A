@@ -75,8 +75,16 @@ const buildQueryForGetQuestion = (filters) => {
     return query;
 }
 
-const buildQueryForGetAnswers = (post_id) => {
-    let query = "SELECT ans_id,answer,name,created_at FROM answers LEFT JOIN users ON answers.user_id = users.user_id WHERE post_id = ? ORDER BY created_at";
+const buildQueryForGetAnswers = (fields) => {
+    let selectedFields = "ans_id,answer,name,created_at";
+    if (fields)
+        selectedFields = fields.split(',').join(',');
+    let query = `SELECT ${selectedFields} FROM answers LEFT JOIN users ON answers.user_id = users.user_id WHERE post_id = ? ORDER BY created_at`;
+    return query;
+}
+
+const buildQueryForGetPostDetails = () => {
+    let query = `SELECT post_id,title,description,tags,name AS author,created_at FROM posts LEFT JOIN users ON posts.user_id = users.user_id WHERE title LIKE ?`;
     return query;
 }
 
@@ -87,5 +95,6 @@ module.exports = {
     buildQueryForUpdatePosts,
     buildQueryForAnswerPost,
     buildQueryForGetQuestion,
-    buildQueryForGetAnswers
+    buildQueryForGetAnswers,
+    buildQueryForGetPostDetails
 }

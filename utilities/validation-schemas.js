@@ -33,11 +33,17 @@ const getQuestionsSchema = Joi.object({
     tags: Joi.string()
 })
 
+const getPostDetailsSchema = Joi.object({
+    title: Joi.string().min(3).required(),
+    fields: Joi.string()
+})
+
 module.exports = {
     userSchema,
     newPostSchema,
     updatePostSchema,
     deletePostSchema,
     answerPostSchema,
-    getQuestionsSchema
+    getQuestionsSchema,
+    getPostDetailsSchema
 }

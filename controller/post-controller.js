@@ -7,14 +7,16 @@ const {
     buildQueryForUpdatePosts,
     buildQueryForAnswerPost,
     buildQueryForGetQuestion,
-    buildQueryForGetAnswers
+    buildQueryForGetAnswers,
+    buildQueryForGetPostDetails
 } = require('./query-builders');
 const {
     newPostSchema,
     deletePostSchema,
     updatePostSchema,
     answerPostSchema,
-    getQuestionsSchema
+    getQuestionsSchema,
+    getPostDetailsSchema
 } = require('../utilities/validation-schemas');
 const { validateUserInput } = require('../utilities/input-validator');
 
@@ -159,13 +161,6 @@ const getQuestions = async(req, res, next) => {
         return;
     }
 
-    // dbResponse.result.forEach(async(question) => {
-    //     console.log(question.post_id);
-    //     let query = buildQueryForGetAnswers();
-    //     // console.log(query);
-    //     // let answers = await runQueryAsync(query, [question.post_id]);
-    //     console.log(await runQueryAsync(query, [question.post_id]));
-    // });
     for (let question of dbResponse.result) {
         let query = buildQueryForGetAnswers();
         let answers = await runQueryAsync(query, [question.post_id]);
@@ -176,10 +171,38 @@ const getQuestions = async(req, res, next) => {
     successResponse(res, `${dbResponse.result.length} questions found for your search`, 200, dbResponse.result);
 }
 
+
+const getPostDetails = async(req, res, next) => {
+    const joiError = validateUserInput(getPostDetailsSchema, req.query);
+    if (joiError !== true) {
+        next(ApiError.badRequest(joiError));
+        return;
+    }
+
+    let query = buildQueryForGetPostDetails();
+    let queryParams = [`%${req.query.title}%`];
+    let dbResponse = await runQueryAsync(query, queryParams);
+
+    if (dbResponse.error) {
+        next(ApiError.internalError(dbResponse.error.message));
+        return;
+    }
+
+    for (let question of dbResponse.result) {
+        let query = buildQueryForGetAnswers(req.query.fields);
+        let answers = await runQueryAsync(query, [question.post_id]);
+        if (answers.result.length > 0)
+            question.answers = answers.result;
+    }
+
+
+    successResponse(res, "Post details", 200, dbResponse.result);
+}
 module.exports = {
     createNewPost,
     updatePost,
     deletePost,
     answerPost,
-    getQuestions
+    getQuestions,
+    getPostDetails
 }
