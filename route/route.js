@@ -1,9 +1,17 @@
 const router = require("express").Router();
 const { login } = require('../controller/user-controller');
-const { createNewPost, updatePost, deletePost, answerPost } = require('../controller/post-controller');
+const {
+    createNewPost,
+    updatePost,
+    deletePost,
+    answerPost,
+    getQuestions
+} = require('../controller/post-controller');
 const { authenticateUserToken } = require('../middlewares/authenticate-user-token');
 
 router.post('/login', login);
+
+router.get('/questions', getQuestions);
 
 router.use(authenticateUserToken);
 

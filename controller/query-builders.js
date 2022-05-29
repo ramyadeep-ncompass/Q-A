@@ -42,10 +42,44 @@ const buildQueryForAnswerPost = () => {
     return query;
 }
 
+const buildQueryForGetQuestion = (filters) => {
+    let pagination = '';
+    let title = '';
+    let tags = '';
+    let filterActive = false;
+    let filterParams = "";
+
+    if (filters.page)
+        pagination = ` LIMIT 10 OFFSET ${(filters.page - 1) * 10}`;
+
+    if (filters.title) {
+        if (filterActive) {
+            title = ' AND title=?'
+        } else {
+            filterActive = true;
+            title = "WHERE title=?"
+        }
+        filterParams += title
+    }
+    if (filters.tags)
+        if (filterActive) {
+            tags = " AND tags=?"
+        } else {
+            filterActive = true;
+            tags = "WHERE tags=?"
+        }
+    filterParams += tags
+
+
+    let query = `SELECT post_id,title,description,tags,name AS author,created_at FROM posts LEFT JOIN users ON posts.user_id = users.user_id ${filterParams} ${pagination}`;
+    return query;
+}
+
 module.exports = {
     buildDeleteQueryForLogin,
     buildQueryForCreatePost,
     buildQueryForDeletePost,
     buildQueryForUpdatePosts,
-    buildQueryForAnswerPost
+    buildQueryForAnswerPost,
+    buildQueryForGetQuestion
 }

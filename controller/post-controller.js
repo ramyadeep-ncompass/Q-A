@@ -5,7 +5,8 @@ const {
     buildQueryForCreatePost,
     buildQueryForDeletePost,
     buildQueryForUpdatePosts,
-    buildQueryForAnswerPost
+    buildQueryForAnswerPost,
+    buildQueryForGetQuestion
 } = require('./query-builders');
 const { newPostSchema, deletePostSchema, updatePostSchema, answerPostSchema } = require('../utilities/validation-schemas');
 const { validateUserInput } = require('../utilities/input-validator');
@@ -128,9 +129,34 @@ const answerPost = async(req, res, next) => {
     successResponse(res, "You answer has been saved");
 }
 
+const getQuestions = async(req, res, next) => {
+    const filters = req.query;
+    let query = buildQueryForGetQuestion(filters);
+    delete filters.page;
+
+    let queryParams = Object.keys(filters)
+        .map(function(key) {
+            return filters[key];
+        });;
+
+    let dbResponse = await runQueryAsync(query, queryParams);
+
+    if (dbResponse.error) {
+        next(ApiError.internalError(dbResponse.error));
+        return;
+    }
+
+    if (dbResponse.result.affectedRows === 0) {
+        next(ApiError.unAuthorized('This post does not exist'));
+        return;
+    }
+    successResponse(res, "All questions", 200, dbResponse.result);
+}
+
 module.exports = {
     createNewPost,
     updatePost,
     deletePost,
-    answerPost
+    answerPost,
+    getQuestions
 }
